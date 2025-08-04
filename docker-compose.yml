@@ -1,4 +1,4 @@
-version: "3.1"
+# version: "3.1"
 
 services:
   web:
@@ -7,7 +7,8 @@ services:
     build:
       context: "./docker/php"
     ports:
-      - "${IP}:${PORT_WEB}:80"
+      - "127.0.0.1:81:80"
+      - "5173:5173"
     volumes:
       - "./root:/var/www/root"
       - "./root/vendor:/var/www/root/vendor:delegated"

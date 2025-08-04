@@ -3,11 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <title>保険システム</title>
 
         <!-- jQuery -->
-        <script src="/js/jquery-3.6.0.min.js"></script>
+        <script src="/js/jquery-3.7.1.min.js"></script>
         <script>
         window.jQuery || document.write('<script src="https://code.jquery.com/jquery-3.6.0.min.js"><\/script>')
         </script>
@@ -22,9 +23,9 @@
         </style>
     </head>
     <body class="antialiased">
-        <div>
+        <div class="mx-5">
             <h1>社内システムホーム</h1>
-            <p>ログイン機能は省略。</p>
+            <p class="bg-sky-100">ログイン機能は省略。</p>
         </div>
     </body>
 </html>
