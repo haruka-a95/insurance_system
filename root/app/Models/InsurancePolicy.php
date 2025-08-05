@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PolicyStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,6 +17,10 @@ class InsurancePolicy extends Model
         'end_date',
         'premium_amount',
         'status'
+    ];
+
+    public $casts = [
+        'status' => PolicyStatus::class,
     ];
 
     public function customer()

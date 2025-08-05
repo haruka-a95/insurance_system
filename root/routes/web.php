@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InsurancePolicyController;
+use App\Http\Controllers\InsuranceProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::resource('customers', CustomerController::class);
+Route::resource('insurance_policies', InsurancePolicyController::class);
+Route::resource('insurance_products', InsuranceProductController::class);
