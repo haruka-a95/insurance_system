@@ -13,7 +13,8 @@ trait InsuranceProductValidationRules
     {
         return[
             'name' =>'required|max:255',
-            'type' =>'requited|in:' . implode(',', InsuranceType::values()),
+            'type' =>'required|in:' . implode(',', InsuranceType::values()),
+            'description' =>'nullable|max:255',
         ];
     }
 }

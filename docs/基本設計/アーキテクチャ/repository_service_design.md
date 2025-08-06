@@ -1,8 +1,8 @@
 # アーキテクチャ概要
 このアプリケーションでは、リポジトリパターンとサービス層を採用し、ビジネスロジックの責務分離と保守性の向上を目的としています。
 
-1. リポジトリパターン（Repository Pattern）
-## 目的
+## 1. リポジトリパターン（Repository Pattern）
+### 目的
 
 Eloquent ORMに依存しすぎない設計を実現
 
@@ -10,7 +10,7 @@ Eloquent ORMに依存しすぎない設計を実現
 
 将来的にデータソース（MySQL → APIなど）が変わっても影響を最小限にする
 
-## 構成
+### 構成
 
 ```App\Repositories\Contracts\```
 各エンティティ（Customer、InsurancePolicy、InsuranceProduct）のインターフェースを定義
@@ -31,8 +31,8 @@ interface CustomerRepositoryInterface
 }
 ```
 
-2. サービス層（Service Layer）
-## 目的
+## 2. サービス層（Service Layer）
+### 目的
 
 ビジネスロジックをコントローラーから分離
 
@@ -40,7 +40,7 @@ interface CustomerRepositoryInterface
 
 再利用性・テスト容易性を向上
 
-## 構成
+### 構成
 
 ```App\Services\```
 各エンティティごとにServiceクラスを作成
@@ -67,7 +67,7 @@ class CustomerService
 }
 ```
 
-3. メリット
+## 3. メリット
 - 疎結合な構成
 - コントローラーがデータアクセス実装（Eloquent）に依存しない
 - テストが容易
@@ -75,7 +75,7 @@ class CustomerService
 - 責務分離
 - コントローラーは入出力処理、リポジトリはデータ操作、サービスはビジネスロジックと役割が明確化
 
-4. ディレクトリ構成
+## 4. ディレクトリ構成
 ```bash
 app/
  ├── Http/

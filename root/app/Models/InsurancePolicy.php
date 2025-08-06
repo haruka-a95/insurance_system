@@ -12,7 +12,6 @@ class InsurancePolicy extends Model
     protected $fillable = [
         'policy_number',
         'customer_id',
-        'product_id',
         'start_date',
         'end_date',
         'premium_amount',
@@ -28,8 +27,13 @@ class InsurancePolicy extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function product()
+    public function products()
     {
-        return $this->belongsTo(InsuranceProduct::class);
+        return $this->belongsToMany(InsuranceProduct::class, 'insurance_policy_product');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status?->label() ?? '不明';
     }
 }

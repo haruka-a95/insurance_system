@@ -36,13 +36,15 @@ class TestDataSeeder extends Seeder
         // Insurance Products
         DB::table('insurance_products')->insert([
             [
-                'name' => '自動車保険',
-                'description' => '車両事故や対人・対物賠償をカバー',
-                'type' => 'auto',
+                'id' => 1,
+                'name' => 'がん保険',
+                'description' => 'がん保険をカバー',
+                'type' => 'cancer',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
+                'id' => 2,
                 'name' => '生命保険',
                 'description' => '死亡保障と医療保障を提供',
                 'type' => 'life',
@@ -54,7 +56,7 @@ class TestDataSeeder extends Seeder
         // Insurance Policies
         DB::table('insurance_policies')->insert([
             [
-                'policy_number' => 'POL-10001',
+                'policy_number' => 'TEST-10001',
                 'customer_id' => 1,
                 'product_id' => 1,
                 'start_date' => '2024-01-01',

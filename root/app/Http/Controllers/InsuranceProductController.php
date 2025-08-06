@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Enums\ApprovalStatus;
 use App\Services\InsuranceProductService;
 use App\Repositories\Contracts\InsuranceProductInterface;
 use App\Http\Requests\StoreInsuranceProductRequest;
@@ -34,10 +35,17 @@ class InsuranceProductController extends Controller
         return redirect()->route('insurance_products.index')->with('success', '保険製品を登録しました');
     }
 
+    public function show(int $id)
+    {
+        $insuranceProduct = $this->insuranceProductRepo->findById($id);
+        return view('insurance_products.show', compact('insuranceProduct'));
+    }
+
     public function edit(int $id)
     {
         $insuranceProduct = $this->insuranceProductRepo->findById($id);
-        return view('customers.edit', compact('insuranceProduct'));
+        $statuses = ApprovalStatus::options();
+        return view('insurance_products.edit', compact('insuranceProduct', 'statuses'));
     }
 
     public function update(int $id, UpdateInsuranceProductRequest $request)

@@ -29,10 +29,10 @@ class CustomerController extends Controller
         return view('customers.create');
     }
 
-    public function show()//////////////////あとで変更//////////////////////////////////////////////
+    public function show(int $id)
     {
-        $customers = $this->customerRepo->getAll();
-        return view('customers.index', compact('customers'));
+        $customer = $this->customerRepo->findById($id);
+        return view('customers.show', compact('customer'));
     }
 
     public function store(StoreCustomerRequest $request)

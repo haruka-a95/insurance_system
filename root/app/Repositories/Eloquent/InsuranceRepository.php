@@ -19,12 +19,34 @@ class InsuranceRepository implements InsurancePolicyInterface
 
     public function create(array $data)
     {
-        return InsurancePolicy::create($data);
+        //多対多の関連付け用製品ID配列を分離
+        $productIds = $data['product_ids'] ?? [];
+        unset($data['product_ids']);
+
+        $insurancePolicy = InsurancePolicy::create($data);
+        if (!empty('$productIds')) {
+            //製品を中間テーブルで紐づけ
+            $insurancePolicy->products()->sync($productIds);
+        }
+        return $insurancePolicy;
     }
 
     public function update(int $id, array $data)
     {
-        return InsurancePolicy::update($data);
+        $productIds = $data['product_ids'] ?? [];
+        unset($data['product_ids']);
+
+        $insurancePolicy = InsurancePolicy::findOrFail($id);
+        $insurancePolicy->update($data);
+
+        if (!empty($productIds)) {
+            $insurancePolicy->products()->sync($productIds);
+        } else {
+            // 製品が空なら関連解除も可能
+            $insurancePolicy->products()->detach();
+        }
+
+        return $insurancePolicy;
     }
 
     public function delete(int $id)

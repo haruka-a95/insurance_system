@@ -25,7 +25,9 @@ class InsuranceProductRepository implements InsuranceProductInterface
 
     public function update(int $id, array $data)
     {
-        return InsuranceProduct::update($id, $data);
+        $insuranceProduct = InsuranceProduct::findOrFail($id);
+        $insuranceProduct->update($data);
+        return $insuranceProduct;
     }
 
     public function delete(int $id)

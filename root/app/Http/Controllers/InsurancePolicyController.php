@@ -6,16 +6,26 @@ use App\Repositories\Contracts\InsurancePolicyInterface;
 use App\Services\InsurancePolicyService;
 use App\Http\Requests\StoreInsurancePolicyRequest;
 use App\Http\Requests\UpdateInsurancePolicyRequest;
+use App\Repositories\Contracts\CustomerRepositoryInterface;
+use App\Repositories\Contracts\InsuranceProductInterface;
 
 class InsurancePolicyController extends Controller
 {
     protected $insurancePolicyRepo;
     protected $insurancePolicyService;
+    protected $customerRepo;
+    protected $productRepo;
 
-    public function __construct(InsurancePolicyInterface $insurancePolicyRepo,InsurancePolicyService $insurancePolicyService)
-    {
+    public function __construct(
+        InsurancePolicyInterface $insurancePolicyRepo,
+        InsurancePolicyService $insurancePolicyService,
+        CustomerRepositoryInterface $customerRepo,
+        InsuranceProductInterface $productRepo
+        ) {
         $this->insurancePolicyRepo = $insurancePolicyRepo;
         $this->insurancePolicyService = $insurancePolicyService;
+        $this->customerRepo = $customerRepo;
+        $this->productRepo = $productRepo;
     }
 
     public function index()
@@ -24,9 +34,11 @@ class InsurancePolicyController extends Controller
         return view('insurance_policies.index', compact('insurancePolicies'));
     }
 
-    public function create()
+    public function create(CustomerRepositoryInterface $customerRepo, InsuranceProductInterface $productRepo)
     {
-        return view('insurance_policies.create');
+        $customers = $customerRepo->getAll();
+        $products = $productRepo->getAll();
+        return view('insurance_policies.create', compact('customers', 'products'));
     }
 
     public function store(StoreInsurancePolicyRequest $request)
@@ -38,13 +50,13 @@ class InsurancePolicyController extends Controller
     public function edit(int $id)
     {
         $insurancePolicy = $this->insurancePolicyRepo->findById($id);
-        return view('customers.edit', compact('insurancePolicy'));
+        return view('insurance_policies.edit', compact('insurancePolicy'));
     }
 
     public function update(UpdateInsurancePolicyRequest $request, int $id)
     {
         $this->insurancePolicyService->updateInsurancePolicy($id, $request->validated());
-        return redirect()->route('insurance_polices.index')->with('success', '保険契約情報を更新しました');
+        return redirect()->route('insurance_policies.index')->with('success', '保険契約情報を更新しました');
     }
 
     public function destroy(int $id)
