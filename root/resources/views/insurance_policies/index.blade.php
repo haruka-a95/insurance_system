@@ -11,6 +11,7 @@
         </div>
     @endif
 
+    <!-- 新規登録 -->
     <div class="mb-4">
         <a href="{{ route('insurance_policies.create') }}"
            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -18,6 +19,43 @@
         </a>
     </div>
 
+    <!-- 検索 -->
+     <div class="container mx-auto p-4">
+        <!-- 検索フォーム -->
+         <form method="GET" action="{{ route('insurance_policies.index') }}" class="mb-2 grid grid-cols-3 gap-4">
+            <!-- 成約番号 -->
+             <x-form-input label="成約番号" name="policy_number" :value="old('policy_number')" />
+             <!-- 顧客番号 -->
+             <x-form-input label="顧客番号" name="customer_id" :value="old('customer_id')" />
+             <!-- 関連商品名 -->
+             <x-form-input label="関連商品" name="product_name" :value="old('product_name')" />
+             <!-- 開始日 -->
+              <x-form-date label="開始日" name="start_date_from"/>
+              <x-form-date label="開始日" name="start_date_to"/>
+              <!-- 満了日 -->
+               <x-form-date label="満了日" name="end_date_from"/>
+               <x-form-date label="満了日" name="end_date_to"/>
+              <!-- 保険料 -->
+               <input type="number" name="amount_min" placeholder="金額下限" value="{{ request('amount_min') }}">
+               <input type="number" name="amount_max" placeholder="金額上限" value="{{ request('amount_max') }}">
+              <!-- ステータス -->
+               @php
+                $statusOptions = [];
+                foreach (\App\Enums\PolicyStatus::cases() as $case) {
+                    $statusOptions[$case->value] = $case->label();
+                }
+                @endphp
+                <x-form-select label="ステータス" name="status[]" :options="$statusOptions" :selected="old('status', $filters['status'] ?? [])" multiple />
+
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">検索</button>
+         </form>
+         <a href="{{ route('insurance_policies.index', ['clear' => 1]) }}"
+            class="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-4 rounded">
+            条件クリア
+            </a>
+     </div>
+
+    <!-- 一覧 -->
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300">
             <thead>
@@ -76,6 +114,9 @@
                 @endforelse
             </tbody>
         </table>
+    </div>
+    <div class="m-2">
+        {{ $insurancePolicies->withQueryString()->links() }}
     </div>
 </div>
 @endsection

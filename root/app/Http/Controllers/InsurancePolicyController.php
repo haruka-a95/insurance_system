@@ -8,6 +8,8 @@ use App\Http\Requests\StoreInsurancePolicyRequest;
 use App\Http\Requests\UpdateInsurancePolicyRequest;
 use App\Repositories\Contracts\CustomerRepositoryInterface;
 use App\Repositories\Contracts\InsuranceProductInterface;
+use App\Services\InsurancePolicySearchService;
+use Illuminate\Http\Request;
 
 class InsurancePolicyController extends Controller
 {
@@ -15,23 +17,53 @@ class InsurancePolicyController extends Controller
     protected $insurancePolicyService;
     protected $customerRepo;
     protected $productRepo;
+    protected $searchService;
 
     public function __construct(
         InsurancePolicyInterface $insurancePolicyRepo,
         InsurancePolicyService $insurancePolicyService,
         CustomerRepositoryInterface $customerRepo,
-        InsuranceProductInterface $productRepo
+        InsuranceProductInterface $productRepo,
+        InsurancePolicySearchService $searchService
         ) {
         $this->insurancePolicyRepo = $insurancePolicyRepo;
         $this->insurancePolicyService = $insurancePolicyService;
         $this->customerRepo = $customerRepo;
         $this->productRepo = $productRepo;
+        $this->searchService = $searchService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $insurancePolicies = $this->insurancePolicyRepo->getAll();
-        return view('insurance_policies.index', compact('insurancePolicies'));
+        $filters = $request->only([
+            'policy_number',
+            'customer_id',
+            'product_name',
+            'start_date_from',
+            'start_date_to',
+            'end_date_from',
+            'end_date_to',
+            'amount_min',
+            'amount_max',
+            'status'
+        ]);
+
+        // クリアフラグがある場合はセッションクリア
+    if ($request->has('clear')) {
+        session()->forget('insurance_policy_filters');
+        $filters = []; // フィルターを空に
+    } else {
+        // 検索条件があればセッションに保存
+        if (!empty(array_filter($filters))) {
+            session(['insurance_policy_filters' => $filters]);
+        } elseif (session()->has('insurance_policy_filters') && !$request->has('page')) {
+            // ページング時はセッションの検索条件を使う
+            $filters = session('insurance_policy_filters');
+        }
+    }
+
+        $insurancePolicies = $this->searchService->search($filters);
+        return view('insurance_policies.index', compact('insurancePolicies','filters'));
     }
 
     public function create(CustomerRepositoryInterface $customerRepo, InsuranceProductInterface $productRepo)
