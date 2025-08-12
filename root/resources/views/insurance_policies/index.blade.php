@@ -55,6 +55,8 @@
             </a>
      </div>
 
+     <!-- CSV出力 -->
+      <a href="{{ route('insurance_policies.export_csv', request()->query()) }}" class="bold underline">CSV出力</a>
     <!-- 一覧 -->
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300">

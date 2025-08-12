@@ -3,6 +3,7 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InsurancePolicyController;
 use App\Http\Controllers\InsuranceProductController;
+use App\Models\InsurancePolicy;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,3 +24,6 @@ Route::get('/', function () {
 Route::resource('customers', CustomerController::class);
 Route::resource('insurance_policies', InsurancePolicyController::class);
 Route::resource('insurance_products', InsuranceProductController::class);
+
+//ポリシーCSV 出力
+Route::get('insurance-policy/export-csv', [InsurancePolicyController::class, 'exportCsv'])->name('insurance_policies.export_csv');

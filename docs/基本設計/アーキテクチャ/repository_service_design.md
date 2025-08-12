@@ -96,8 +96,12 @@ app/
  ├── Repositories/
  │   ├── Contracts/   #インターフェース
  │   └── Eloquent/    #実装
- │
-├── Services/
+ ｜
+ ├── UseCases/
+ │    ├── FetchInsurancePoliciesUseCase.php
+ │    └── ExportInsurancePolicyCsvUseCase.php
+ ｜
+ ├── Services/   #← 既存サービスは段階的にUseCasesへ移行を検討
  │   ├── InsurancePolicyService.php
  │   ├── InsurancePolicySearchService.php
  │   ├── CustomerService.php
