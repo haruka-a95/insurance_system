@@ -84,7 +84,41 @@ class CustomerService
 - 責務分離により可読性・保守性向上
 - コントローラーは入出力処理、リポジトリはデータ操作、サービスはビジネスロジックと役割が明確化
 
-## 4. ディレクトリ構成
+## 6. ユースケースクラス（Use Case）
+### 目的
+- アプリケーションの具体的な「業務フロー」や「操作単位」を表現
+- 複数のサービスクラスを組み合わせて業務の流れをコントロール
+- 画面や機能ごとのユースケース単位で処理をまとめ、保守性とテスト容易性を向上
+
+| 層         | 役割例                                  |
+| --------- | ------------------------------------ |
+| ユースケースクラス | 「保険契約CSVエクスポート」などの具体的な業務フローを担当       |
+| サービスクラス   | 「保険契約の検索」「顧客情報更新」など、単一責任のビジネスロジックを担当 |
+
+### 例
+```php
+class ExportInsurancePolicyCsvUseCase
+{
+    protected InsurancePolicySearchService $searchService;
+
+    public function __construct(InsurancePolicySearchService $searchService)
+    {
+        $this->searchService = $searchService;
+    }
+
+    public function handle(array $filters)
+    {
+        // 複雑な検索ロジックはsearchServiceに任せてデータ取得
+        $policies = $this->searchService->searchAll($filters);
+
+        // CSV出力の業務フローをここで実装
+        // ...
+    }
+}
+```
+
+
+## 7. ディレクトリ構成
 ```bash
 app/
  ├── Http/
