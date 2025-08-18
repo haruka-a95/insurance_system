@@ -70,6 +70,30 @@ class InsurancePolicySearchService
             }
         }
 
+        //並び替え
+        if (!empty($filters['sort_by'])) {
+            switch ($filters['sort_by']) {
+                case 'start_date_asc':
+                    $query->orderBy('start_date', 'asc');
+                    break;
+                case 'start_date_desc':
+                    $query->orderBy('start_date', 'desc');
+                    break;
+                case 'end_date_asc':
+                    $query->orderBy('end_date', 'asc');
+                    break;
+                case 'end_date_desc':
+                    $query->orderBy('end_date', 'desc');
+                    break;
+                case 'premium_amount_asc':
+                    $query->orderBy('premium_amount', 'asc');
+                    break;
+                case 'premium_amount_desc':
+                $query->orderBy('premium_amount', 'desc');
+                break;
+            }
+        }
+
         return $query->paginate(20);
     }
 

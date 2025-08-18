@@ -53,22 +53,9 @@ class InsurancePolicyController extends Controller
             'end_date_to',
             'amount_min',
             'amount_max',
-            'status'
+            'status',
+            'sort_by',
         ]);
-
-        // クリアフラグがある場合はセッションクリア
-        if ($request->has('clear')) {
-            session()->forget('insurance_policy_filters');
-            $filters = []; // フィルターを空に
-        } else {
-            // 検索条件があればセッションに保存
-            if (!empty(array_filter($filters))) {
-                session(['insurance_policy_filters' => $filters]);
-            } elseif (session()->has('insurance_policy_filters') && !$request->has('page')) {
-                // ページング時はセッションの検索条件を使う
-                $filters = session('insurance_policy_filters');
-            }
-        }
 
         // ユースケースの handle メソッドにフィルターを渡して処理を依頼
         $insurancePolicies = $this->fetchInsurancePoliciesUseCase->handle($filters, 20);
