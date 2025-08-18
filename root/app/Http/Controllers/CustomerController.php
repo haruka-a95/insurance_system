@@ -6,6 +6,7 @@ use App\Repositories\Contracts\CustomerRepositoryInterface;
 use App\Services\CustomerService;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
@@ -18,10 +19,15 @@ class CustomerController extends Controller
         $this->customerService = $customerService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $customers = $this->customerRepo->getAll();
-        return view('customers.index', compact('customers'));
+        // $customers = $this->customerRepo->getAll();
+        //検索条件取得
+        $filters = $request->only(['name', 'birthday', 'phone', 'cellphone', 'email', 'updated_from', 'updated_to']);
+        //サービスで検索
+        $customers = $this->customerService->search($filters);
+
+        return view('customers.index', compact('customers', 'filters'));
     }
 
     public function create()

@@ -20,6 +20,12 @@ class CustomerService
         return $this->customerRepo->getAll();
     }
 
+    //検索
+    public function search(array $filters)
+    {
+        return $this->customerRepo->search($filters);
+    }
+
     public function createCustomer(array $data)
     {
         DB::beginTransaction();

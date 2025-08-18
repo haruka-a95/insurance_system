@@ -18,6 +18,27 @@
         </a>
     </div>
 
+    <div class="mb-4">
+        <button id="toggle-search" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">
+            検索フォーム表示
+        </button>
+
+        <div id="search-form" class="mb-6 p-4 border border-gray-300 rounded hidden">
+            <form method="GET" action="{{ route('customers.index') }}" class="grid grid-cols-4 gap-4">
+                <x-form-input label="名前" name="name" :value="$filters['name'] ?? ''"/>
+                <x-form-input label="メール" name="email" :value="$filters['email'] ?? ''"/>
+                <x-form-input label="電話番号" name="phone" :value="$filters['phone'] ?? ''"/>
+                <x-form-input label="携帯電話" name="cellphone" :value="$filters['cellphone'] ?? ''"/>
+                <x-form-date label="更新日～" name="updated_from" :value="$filters['updated_from'] ?? ''" />
+                <x-form-date label="更新日期限" name="updated_to" :value="$filters['update_to'] ?? ''" />
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded col-span-1">検索</button>
+                <button type="button" id="clear-filters" class="bg-gray-500 text-black px-4 py-2 rounded col-span-1">
+                    クリア
+                </button>
+            </form>
+        </div>
+    </div>
+
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300">
             <thead>
