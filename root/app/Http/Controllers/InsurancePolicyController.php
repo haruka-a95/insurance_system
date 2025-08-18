@@ -9,9 +9,11 @@ use App\Http\Requests\UpdateInsurancePolicyRequest;
 use App\Repositories\Contracts\CustomerRepositoryInterface;
 use App\Repositories\Contracts\InsuranceProductInterface;
 use App\Services\InsurancePolicySearchService;
+use App\UseCases\ExportFilteredInsurancePoliciesCsvUseCase;
 use App\UseCases\ExportInsurancePolicyCsvUseCase;
 use App\UseCases\FetchInsurancePoliciesUseCase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
 
 class InsurancePolicyController extends Controller
 {
@@ -22,6 +24,7 @@ class InsurancePolicyController extends Controller
     protected $searchService;
     private FetchInsurancePoliciesUseCase $fetchInsurancePoliciesUseCase;
     private ExportInsurancePolicyCsvUseCase $exportCsvUseCase;
+    private ExportFilteredInsurancePoliciesCsvUseCase $filteredCsvUseCase;
 
     public function __construct(
         InsurancePolicyInterface $insurancePolicyRepo,
@@ -30,7 +33,8 @@ class InsurancePolicyController extends Controller
         InsuranceProductInterface $productRepo,
         InsurancePolicySearchService $searchService,
         FetchInsurancePoliciesUseCase $fetchInsurancePoliciesUseCase,
-        ExportInsurancePolicyCsvUseCase $exportCsvUseCase
+        ExportInsurancePolicyCsvUseCase $exportCsvUseCase,
+        ExportFilteredInsurancePoliciesCsvUseCase $filteredCsvUseCase
         ) {
         $this->insurancePolicyRepo = $insurancePolicyRepo;
         $this->insurancePolicyService = $insurancePolicyService;
@@ -39,6 +43,7 @@ class InsurancePolicyController extends Controller
         $this->searchService = $searchService;
         $this->fetchInsurancePoliciesUseCase = $fetchInsurancePoliciesUseCase;
         $this->exportCsvUseCase = $exportCsvUseCase;
+        $this->filteredCsvUseCase = $filteredCsvUseCase;
     }
 
     public function index(Request $request)
@@ -79,6 +84,15 @@ class InsurancePolicyController extends Controller
         ]);
 
         return $this->exportCsvUseCase->handle($filters);
+    }
+
+    public function exportFiltered(Request $request)
+    {
+        $filters = $request->except(['page']); // ページ番号以外取得
+        $sortBy = $request->input('sort_by');
+        $sortDirection = $request->input('sort_direction', 'asc');
+
+        return $this->filteredCsvUseCase->handle($filters, $sortBy, $sortDirection);
     }
 
     public function create(CustomerRepositoryInterface $customerRepo, InsuranceProductInterface $productRepo)

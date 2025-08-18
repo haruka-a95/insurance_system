@@ -20,6 +20,8 @@ class InsurancePolicy extends Model
 
     public $casts = [
         'status' => PolicyStatus::class,
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
 
     public function customer()

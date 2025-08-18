@@ -64,6 +64,8 @@
                         <option value="end_date_desc" {{ request('sort_by') == 'end_date_desc' ? 'selected' : '' }}>満了日 降順</option>
                         <option value="premium_amount_asc" {{ request('sort_by') == 'premium_amount_asc' ? 'selected' : '' }}>保険料 昇順</option>
                         <option value="premium_amount_desc" {{ request('sort_by') == 'premium_amount_desc' ? 'selected' : '' }}>保険料 降順</option>
+                        <option value="status_asc" {{ request('sort_by') == 'status_asc' ? 'selected' : '' }}>ステータス昇順</option>
+                        <option value="status_desc" {{ request('sort_by') == 'status_desc' ? 'selected' : '' }}>ステータス降順</option>
                     </select>
                 </div>
                 <div class="col-span-4 flex gap-2 justify-end">
@@ -71,6 +73,7 @@
                     <button type="button" id="clear-filters" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded col-span-1">
                         クリア
                     </button>
+                    <button type="submit" formaction="{{ route('insurance_policies.export_filtered') }}" class="bg-lime-500 hover:bg-lime-700 text-white px-4 py-2 rounded">検索条件でCSV出力</button>
                 </div>
          </form>
      </div>
