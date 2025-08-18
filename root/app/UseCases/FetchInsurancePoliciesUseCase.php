@@ -14,13 +14,30 @@ class FetchInsurancePoliciesUseCase
 
 
     /**
-     * 保険契約一覧を取得する（全件取得などのビジネスロジックもここに記述可能）
+     * 保険契約一覧を取得する
+     * 空フィルターなら全件取得
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Collection
      */
-    public function handle(array $filters, int $perPage = 20)
+    public function handle(array $filters = [], int $perPage = 20)
     {
-        //フィルタ条件に基づく一覧取得ロジック
-        return $this->searchService->search($filters, $perPage);
+        // nullや空配列を除去
+        $filters = array_map(function($v){
+            if (is_array($v)) {
+                return array_filter($v, fn($val) => !is_null($val) && $val !== '');
+            }
+            return $v;
+        }, $filters);
+
+        // フィルターが空なら全件取得
+        $hasFilters = array_filter($filters, fn($v) => !empty($v));
+
+        if ($hasFilters) {
+            return $this->searchService->search($filters, $perPage);
+        } else {
+            return $this->searchService->search([], $perPage);
+        }
     }
 }

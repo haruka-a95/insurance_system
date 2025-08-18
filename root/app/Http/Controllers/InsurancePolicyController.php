@@ -71,7 +71,8 @@ class InsurancePolicyController extends Controller
         }
 
         // ユースケースの handle メソッドにフィルターを渡して処理を依頼
-        $insurancePolicies = $this->fetchInsurancePoliciesUseCase->handle($filters);
+        $insurancePolicies = $this->fetchInsurancePoliciesUseCase->handle($filters, 20);
+
         return view('insurance_policies.index', compact('insurancePolicies','filters'));
     }
 

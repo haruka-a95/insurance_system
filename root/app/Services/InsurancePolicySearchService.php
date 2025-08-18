@@ -64,7 +64,10 @@ class InsurancePolicySearchService
 
         //ステータス
         if (!empty($filters['status']) && is_array($filters['status'])) {
-            $query->whereIn('status', $filters['status']);
+            $status = array_filter($filters['status']);
+            if (!empty($status)) {
+                $query->whereIn('status', $status);
+            }
         }
 
         return $query->paginate(20);
