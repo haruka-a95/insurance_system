@@ -86,3 +86,6 @@ phpMyAdmin URL例: http://localhost:8081
 
 ### マイグレーション（テスト用DB）
 ```php artisan migrate --env=testing```
+
+## ドキュメント
+[docディレクトリをご確認ください](https://github.com/haruka-a95/insurance_system/tree/main/docs)
