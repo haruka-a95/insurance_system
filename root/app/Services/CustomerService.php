@@ -20,10 +20,19 @@ class CustomerService
         return $this->customerRepo->getAll();
     }
 
-    //検索
-    public function search(array $filters)
+    //検索＆ソート
+    public function search(array $filters, string $sort = 'id', string $direction = 'asc')
     {
-        return $this->customerRepo->search($filters);
+        //ソートカラムを制限
+        $allowedSorts = ['id', 'name', 'email', 'address'];
+        if (!in_array($sort, $allowedSorts)) {
+            $sort = 'id';
+        }
+
+        $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+        //リポジトリで検索+ソート
+        return $this->customerRepo->search($filters, $sort, $direction);
     }
 
     public function createCustomer(array $data)

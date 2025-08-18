@@ -17,9 +17,13 @@ class CustomerRepository implements CustomerRepositoryInterface
         return Customer::findOrFail($id);
     }
 
-    public function search(array $filters)
+    public function search(array $filters, string $sort = 'id', string $direction = 'asc')
     {
         $query = Customer::query();
+
+        if (!empty($filters['id'])) {
+            $query->where('id', 'like', "%{$filters['id']}%");
+        }
 
         if (!empty($filters['name'])) {
             $query->where('name', 'like', "%{$filters['name']}%");
@@ -44,6 +48,13 @@ class CustomerRepository implements CustomerRepositoryInterface
         if (!empty($filters['cellphone'])) {
             $query->where('cellphone', 'like', "%{$filters['cellphone']}%");
         }
+
+        if (!empty($filters['address'])) {
+        $query->where('address', 'like', "%{$filters['address']}%");
+        }
+
+        //ソート適用
+        $query->orderBy($sort, $direction);
 
         return $query->paginate(10);
     }

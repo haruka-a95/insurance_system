@@ -21,11 +21,10 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        // $customers = $this->customerRepo->getAll();
         //検索条件取得
         $filters = $request->only(['name', 'birthday', 'phone', 'cellphone', 'email', 'updated_from', 'updated_to']);
         //サービスで検索
-        $customers = $this->customerService->search($filters);
+        $customers = $this->customerService->search($request->all(), $request->get('sort', 'id'), $request->get('direction', 'asc'));
 
         return view('customers.index', compact('customers', 'filters'));
     }
