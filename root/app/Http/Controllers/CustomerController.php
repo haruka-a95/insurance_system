@@ -7,6 +7,8 @@ use App\Services\CustomerService;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use Illuminate\Http\Request;
+use App\Http\Requests\SearchCustomerRequest;
+use Illuminate\Support\Arr;
 
 class CustomerController extends Controller
 {
@@ -19,12 +21,18 @@ class CustomerController extends Controller
         $this->customerService = $customerService;
     }
 
-    public function index(Request $request)
+    public function index(SearchCustomerRequest $request)
     {
         //検索条件取得
-        $filters = $request->only(['name', 'birthday', 'phone', 'cellphone', 'email', 'updated_from', 'updated_to']);
+        $filters = Arr::only(
+            $request->validated(),
+            ['name', 'birthday', 'phone', 'cellphone', 'email', 'updated_from', 'updated_to']
+        );
+
         //サービスで検索
-        $customers = $this->customerService->search($request->all(), $request->get('sort', 'id'), $request->get('direction', 'asc'));
+        $customers = $this->customerService->search(
+            $filters, $request->get('sort', 'id'), $request->get('direction', 'asc')
+        );
 
         return view('customers.index', compact('customers', 'filters'));
     }

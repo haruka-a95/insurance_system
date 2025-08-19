@@ -13,7 +13,8 @@ use App\UseCases\ExportFilteredInsurancePoliciesCsvUseCase;
 use App\UseCases\ExportInsurancePolicyCsvUseCase;
 use App\UseCases\FetchInsurancePoliciesUseCase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
+use App\Http\Requests\SearchInsurancePolicyRequest;
+use Illuminate\Support\Arr;
 
 class InsurancePolicyController extends Controller
 {
@@ -46,21 +47,25 @@ class InsurancePolicyController extends Controller
         $this->filteredCsvUseCase = $filteredCsvUseCase;
     }
 
-    public function index(Request $request)
+    public function index(SearchInsurancePolicyRequest $request)
     {
-        $filters = $request->only([
-            'policy_number',
-            'customer_id',
-            'product_name',
-            'start_date_from',
-            'start_date_to',
-            'end_date_from',
-            'end_date_to',
-            'amount_min',
-            'amount_max',
-            'status',
-            'sort_by',
-        ]);
+        //検索条件取得
+        $filters = Arr::only(
+            $request->validated(),
+            [
+                'policy_number',
+                'customer_id',
+                'product_name',
+                'start_date_from',
+                'start_date_to',
+                'end_date_from',
+                'end_date_to',
+                'amount_min',
+                'amount_max',
+                'status',
+                'sort_by',
+            ]
+        );
 
         // ユースケースの handle メソッドにフィルターを渡して処理を依頼
         $insurancePolicies = $this->fetchInsurancePoliciesUseCase->handle($filters, 20);

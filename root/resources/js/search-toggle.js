@@ -3,13 +3,19 @@ export default function initSearchToggle($) {
         // 検索フォーム表示切替
         $('#toggle-search').on('click', function() {
             $('#search-form').toggleClass('hidden');
+
+            //ボタンの文字を切り替え
+            if ($('#search-form').hasClass('hidden')) {
+                $('#toggle-search').text('検索フォーム表示');
+            } else {
+                $('#toggle-search').text('検索フォーム非表示')
+            }
         });
 
-        //ボタンの文字を切り替え
-        if ($('#search-form').hasClass('hidden')) {
-            $(this).text('検索フォームを表示');
-        } else {
-            $(this).text('検索フォームを非表示')
+        //ページ読み込み時にエラーがあればフォームを表示
+        if (window.hasSearchErrors) {
+            $('#search-form').removeClass('hidden');
+            $('#toggle-search').text('検索フォーム非表示');
         }
 
         // クリアボタン

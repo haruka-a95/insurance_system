@@ -30,53 +30,53 @@
              <x-form-input label="顧客番号" name="customer_id" :value="old('customer_id')" />
              <!-- 関連商品名 -->
              <x-form-input label="関連商品" name="product_name" :value="old('product_name')" />
-             <!-- 開始日 -->
-              <x-form-date label="開始日" name="start_date_from"/>
-              <x-form-date label="開始日" name="start_date_to"/>
-              <!-- 満了日 -->
-               <x-form-date label="満了日" name="end_date_from"/>
-               <x-form-date label="満了日" name="end_date_to"/>
-               <!-- ステータス -->
+            <!-- ステータス -->
                @php
                 $statusOptions = [];
                 foreach (\App\Enums\PolicyStatus::cases() as $case) {
                     $statusOptions[$case->value] = $case->label();
                 }
                 @endphp
-                <x-form-select label="ステータス" name="status[]" :options="$statusOptions" :selected="old('status', $filters['status'] ?? [])" multiple />
-              <!-- 保険料 -->
-               <div class="flex flex-col gap-2">
-                    <label for="amount_min" class="block text-gray-700 font-bold mb-2">保険料下限</label>
-                    <input type="number" name="amount_min" placeholder="例: 10000" value="{{ request('amount_min') }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-               </div>
-               <div class="flex flex-col gap-2">
-                    <label for="amount_max" class="block text-gray-700 font-bold mb-2">保険料上限</label>
-                    <input type="number" name="amount_max" placeholder="例: 500000" value="{{ request('amount_max') }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-               </div>
-               <!-- 並び替え -->
-                <div class="flex flex-col gap-1">
-                    <label for="sort_by" class="block text-gray-700 font-bold mb-2">並び替え</label>
-                    <select id="sort_by" name="sort_by" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-1">
-                        <option value="">指定なし</option>
-                        <option value="start_date_asc" {{ request('sort_by') == 'start_date_asc' ? 'selected' : '' }}>開始日 昇順</option>
-                        <option value="start_date_desc" {{ request('sort_by') == 'start_date_desc' ? 'selected' : '' }}>開始日 降順</option>
-                        <option value="end_date_asc" {{ request('sort_by') == 'end_date_asc' ? 'selected' : '' }}>満了日 昇順</option>
-                        <option value="end_date_desc" {{ request('sort_by') == 'end_date_desc' ? 'selected' : '' }}>満了日 降順</option>
-                        <option value="premium_amount_asc" {{ request('sort_by') == 'premium_amount_asc' ? 'selected' : '' }}>保険料 昇順</option>
-                        <option value="premium_amount_desc" {{ request('sort_by') == 'premium_amount_desc' ? 'selected' : '' }}>保険料 降順</option>
-                        <option value="status_asc" {{ request('sort_by') == 'status_asc' ? 'selected' : '' }}>ステータス昇順</option>
-                        <option value="status_desc" {{ request('sort_by') == 'status_desc' ? 'selected' : '' }}>ステータス降順</option>
-                    </select>
-                </div>
+                <x-form-multi-select label="ステータス" name="status" helpText="以下から選択してください。（複数選択可）" :options="$statusOptions" :selected="old('status', $filters['status'] ?? [])" multiple />
+            <!-- 開始日 -->
+              <x-form-date label="開始日（以降）" name="start_date_from"/>
+              <x-form-date label="開始日（以前）" name="start_date_to"/>
+            <!-- 満了日 -->
+              <x-form-date label="満了日（以降）" name="end_date_from"/>
+              <x-form-date label="満了日（以前）" name="end_date_to"/>
+            <!-- 保険料 -->
+             <x-form-input label="保険料下限" placeholder="例: 10000" type="number" name="amount_min" :value="old('amount_min')" />
+             <x-form-input label="保険料上限" placeholder="例: 10000" type="number" name="amount_max" :value="old('amount_min')" />
+            <!-- 並び替え -->
+            @php
+            $sortOptions = [
+                '' => '指定なし',
+                'start_date_asc' => '開始日 昇順',
+                'start_date_desc' => '開始日 降順',
+                'end_date_asc' => '満了日 昇順',
+                'end_date_desc' => '満了日 降順',
+                'premium_amount_asc' => '保険料 昇順',
+                'premium_amount_desc' => '保険料 降順',
+                'status_asc' => 'ステータス昇順',
+                'status_desc' => 'ステータス降順',];
+            @endphp
+                <x-form-select label="並び替え" name="sort_by" :options="$sortOptions"
+                 :selected="old('sort_by', request('sort_by'))"/>
+                <!-- ボタン -->
                 <div class="col-span-4 flex gap-2 justify-end">
+                    <button type="submit" formaction="{{ route('insurance_policies.export_filtered') }}" class="bg-lime-500 hover:bg-lime-700 text-white px-4 py-2 rounded">この検索条件でCSV出力</button>
                     <button type="submit" class="bg-teal-500 hover:bg-teal-700 text-white px-4 py-2 rounded col-span-1">検索</button>
                     <button type="button" id="clear-filters" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded col-span-1">
                         クリア
                     </button>
-                    <button type="submit" formaction="{{ route('insurance_policies.export_filtered') }}" class="bg-lime-500 hover:bg-lime-700 text-white px-4 py-2 rounded">検索条件でCSV出力</button>
                 </div>
          </form>
      </div>
+
+    <!-- バリデーションエラー用フラグ -->
+     @if ($errors->any())
+     <script>window.hasSearchErrors = true;</script>
+     @endif
 
      <!-- CSV出力 -->
       <a href="{{ route('insurance_policies.export_csv', request()->query()) }}" class="bold bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded mt-6 mb-2">CSV出力(全件)</a>

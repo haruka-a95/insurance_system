@@ -29,8 +29,8 @@
                 <x-form-input label="メール" name="email" :value="$filters['email'] ?? ''"/>
                 <x-form-input label="電話番号" name="phone" :value="$filters['phone'] ?? ''"/>
                 <x-form-input label="携帯電話" name="cellphone" :value="$filters['cellphone'] ?? ''"/>
-                <x-form-date label="更新日～" name="updated_from" :value="$filters['updated_from'] ?? ''" />
-                <x-form-date label="更新日期限" name="updated_to" :value="$filters['update_to'] ?? ''" />
+                <x-form-date label="更新日起点" name="updated_from" :value="$filters['updated_from'] ?? ''" />
+                <x-form-date label="更新日終点" name="updated_to" :value="$filters['update_to'] ?? ''" />
                 <div class="col-span-4 flex gap-2 justify-end">
                     <button type="submit" class="bg-teal-500 hover:bg-teal-700 text-white px-4 py-2 rounded col-span-1">検索</button>
                     <button type="button" id="clear-filters" class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded col-span-1">
@@ -40,6 +40,12 @@
             </form>
         </div>
     </div>
+
+    <!-- バリデーションエラー用フラグ -->
+     @if ($errors->any())
+     <script>window.hasSearchErrors = true;</script>
+     @endif
+
     <p class="text-sm">カラム名(ID/氏名/メールアドレス/住所)をクリックして並び替え</p>
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300">
