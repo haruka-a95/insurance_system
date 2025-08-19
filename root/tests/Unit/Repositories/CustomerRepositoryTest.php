@@ -19,8 +19,7 @@ class CustomerRepositoryTest extends TestCase
         $this->repository = new CustomerRepository;
     }
 
-    /* @test */
-    public function it_can_get_all_customers()
+    public function test_it_can_get_all_customers()
     {
         Customer::factory()->count(3)->create();
 
@@ -29,8 +28,7 @@ class CustomerRepositoryTest extends TestCase
         $this->assertCount(3, $customers);
     }
 
-    /** @test */
-    public function int_can_find_customer_by_id()
+    public function test_int_can_find_customer_by_id()
     {
         $customer = Customer::factory()->create();
 
@@ -40,8 +38,7 @@ class CustomerRepositoryTest extends TestCase
         $this->assertEquals($customer->name, $found->name);
     }
 
-    /** @test */
-    public function it_can_create_a_customer()
+    public function test_it_can_create_a_customer()
     {
         $data = [
             'name' => 'テスト太郎A',
@@ -67,7 +64,7 @@ class CustomerRepositoryTest extends TestCase
         $this->assertEquals('aaa@mail.com', $customer->email);
     }
 
-    public function it_can_update_a_customer()
+    public function test_it_can_update_a_customer()
     {
         $customer = Customer::factory()->create();
 
@@ -79,8 +76,7 @@ class CustomerRepositoryTest extends TestCase
         $this->assertDatabaseHas('customers', ['id' => $customer->id, 'name' => 'テスト更新太郎']);
     }
 
-    /** @test */
-    public function it_can_delete_a_customer()
+    public function test_it_can_delete_a_customer()
     {
         $customer = Customer::factory()->create();
 
@@ -90,8 +86,7 @@ class CustomerRepositoryTest extends TestCase
         $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
     }
 
-    /** @test */
-    public function it_can_search_customers_with_filters()
+    public function test_it_can_search_customers_with_filters()
     {
         $customer1 = Customer::factory()->create(['name' => 'Alice', 'email' => 'alice@example.com']);
         $customer2 = Customer::factory()->create(['name' => 'Bob', 'email' => 'bob@example.com']);

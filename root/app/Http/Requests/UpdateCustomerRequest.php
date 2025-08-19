@@ -28,7 +28,7 @@ class UpdateCustomerRequest extends FormRequest
             'birthday'  => 'nullable|date',
             'phone'     => 'nullable|numeric',
             'cellphone' => 'nullable|numeric',
-            'email'     => 'required|email|unique:customers,email,' . $this->route('customer'),
+            'email'     => 'nullable|email|unique:customers,email,' . $this->route('customer'),
             'address'   => 'nullable|string|max:255',
         ];
     }
