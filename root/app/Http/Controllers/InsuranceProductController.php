@@ -6,6 +6,7 @@ use App\Services\InsuranceProductService;
 use App\Repositories\Contracts\InsuranceProductInterface;
 use App\Http\Requests\StoreInsuranceProductRequest;
 use App\Http\Requests\UpdateInsuranceProductRequest;
+use Illuminate\Http\Request;
 
 class InsuranceProductController extends Controller
 {
@@ -58,5 +59,27 @@ class InsuranceProductController extends Controller
     {
         $this->insuranceProductService->deleteInsuranceProduct($id);
         return redirect()->route('insurance_products.index')->with('success', '保険製品を削除しました');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimetypes:text/csv,text/plain,application/vnd.ms-excel',
+        ]);
+
+        $file = $request->file('csv_file');
+
+        //サービスクラスにCSVファイルを渡して処理
+        $result = $this->insuranceProductService->importFromCsv($file);
+
+        if (count($result['errors']) > 0) {
+            return redirect()->back()
+                ->withInput()
+                ->with('import_errors', $result['errors'])
+                ->with('success', "{$result['success']}件登録しました（エラーあり）");
+        }
+
+        return redirect()->route('insurance_products.index')
+            ->with('success', "CSVから{$result['success']}件登録しました");
     }
 }
