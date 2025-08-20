@@ -74,6 +74,7 @@ chmod -R 777 storage/
 
 ### 動作確認
 Web画面 URL例: http://localhost:81
+※ Tailwindを適用させるために```npm run dev```をWebコンテナで実施してください。
 ※ IP・ポートは .env の IP と PORT_WEB を参照
 
 phpMyAdmin URL例: http://localhost:8081
