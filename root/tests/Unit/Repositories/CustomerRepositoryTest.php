@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Customer;
 use App\Repositories\Eloquent\CustomerRepository;
+use Illuminate\Database\QueryException;
 
 class CustomerRepositoryTest extends TestCase
 {
@@ -19,7 +20,8 @@ class CustomerRepositoryTest extends TestCase
         $this->repository = new CustomerRepository;
     }
 
-    public function test_it_can_get_all_customers()
+    /** @test */
+    public function 全顧客を取得できる()
     {
         Customer::factory()->count(3)->create();
 
@@ -28,7 +30,8 @@ class CustomerRepositoryTest extends TestCase
         $this->assertCount(3, $customers);
     }
 
-    public function test_int_can_find_customer_by_id()
+    /** @test */
+    public function IDで顧客を取得できる()
     {
         $customer = Customer::factory()->create();
 
@@ -38,7 +41,8 @@ class CustomerRepositoryTest extends TestCase
         $this->assertEquals($customer->name, $found->name);
     }
 
-    public function test_it_can_create_a_customer()
+    /** @test */
+    public function 正しい情報で顧客を作成できる()
     {
         $data = [
             'name' => 'テスト太郎A',
@@ -64,7 +68,16 @@ class CustomerRepositoryTest extends TestCase
         $this->assertEquals('aaa@mail.com', $customer->email);
     }
 
-    public function test_it_can_update_a_customer()
+    /** @test */
+    public function メールアドレス未入力でエラーになる()
+    {
+        $this->expectException(QueryException::class);
+
+        $this->repository->create(['email' => null]);
+    }
+
+    /** @test */
+    public function 顧客名を更新したときDBも更新される()
     {
         $customer = Customer::factory()->create();
 
@@ -76,7 +89,8 @@ class CustomerRepositoryTest extends TestCase
         $this->assertDatabaseHas('customers', ['id' => $customer->id, 'name' => 'テスト更新太郎']);
     }
 
-    public function test_it_can_delete_a_customer()
+    /** @test */
+    public function 顧客情報を削除できる()
     {
         $customer = Customer::factory()->create();
 
@@ -86,7 +100,8 @@ class CustomerRepositoryTest extends TestCase
         $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
     }
 
-    public function test_it_can_search_customers_with_filters()
+    /** @test */
+    public function 顧客を検索できる()
     {
         $customer1 = Customer::factory()->create(['name' => 'Alice', 'email' => 'alice@example.com']);
         $customer2 = Customer::factory()->create(['name' => 'Bob', 'email' => 'bob@example.com']);

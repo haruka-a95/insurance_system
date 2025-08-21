@@ -6,6 +6,7 @@ use App\Services\CustomerService;
 use Tests\TestCase;
 use Mockery;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CustomerServiceTest extends TestCase
 {
@@ -25,7 +26,8 @@ class CustomerServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_get_all_customers()
+    /** @test */
+    public function 全顧客を取得できる()
     {
         $expected = [
             ['id' => 1, 'name' => 'テスト'],
@@ -41,7 +43,25 @@ class CustomerServiceTest extends TestCase
             $this->assertSame($expected, $result);
     }
 
-    public function test_create_a_customer_commits_transaction()
+    /** @test */
+    public function 検索とソートができる()
+    {
+        $filters = ['name' => 'テスト太郎'];
+        $expected = collect([['id' => 1, 'name' => 'テスト太郎']]);
+
+        $this->customerRepoMock
+            ->shouldReceive('search')
+            ->with($filters, 'name', 'asc')
+            ->once()
+            ->andReturn($expected);
+
+        $result = $this->service->search($filters, 'name', 'asc');
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /** @test */
+    public function 顧客を作成できる()
     {
         $data = ['name' => 'テスト', 'email' => 'aaa@example.com'];
 
@@ -56,7 +76,8 @@ class CustomerServiceTest extends TestCase
             $this->assertEquals('テスト', $result->name);
     }
 
-    public function test_create_and_throw_customer_exception_rollback()
+    /** @test */
+    public function 顧客作成失敗時にロールバックして例外を投げる()
     {
         $this->expectException(Exception::class);
 
@@ -68,10 +89,13 @@ class CustomerServiceTest extends TestCase
             ->with($data)
             ->andThrow(new Exception('DBエラー'));
 
+            Log::shouldReceive('error')->once();
+
             $this->service->createCustomer($data);
     }
 
-    public function test_update_customer_commits_transaction()
+    /** @test */
+    public function 顧客情報を更新できる()
     {
         $id = 1;
         $data = ['name' => '更新後'];
@@ -86,7 +110,8 @@ class CustomerServiceTest extends TestCase
         $this->assertEquals('更新後', $result->name);
     }
 
-    public function test_delete_customer_commits_transaction()
+    /** @test */
+    public function 顧客を削除できる()
     {
         $id = 1;
 
@@ -99,7 +124,8 @@ class CustomerServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function test_delete_customer_throws_exception_and_rolls_back()
+    /** @test */
+    public function 顧客削除失敗時にロールバックして例外を投げる()
     {
         $this->expectException(Exception::class);
 
@@ -109,6 +135,8 @@ class CustomerServiceTest extends TestCase
             ->shouldReceive('delete')
             ->with($id)
             ->andThrow(new Exception('DBエラー'));
+
+        Log::shouldReceive('error')->once();
 
         $this->service->deleteCustomer($id);
     }

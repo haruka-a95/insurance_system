@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Enums\ApprovalStatus;
 use App\Enums\InsuranceType;
 use App\Repositories\Contracts\InsuranceProductInterface;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use League\Csv\Reader;
@@ -68,7 +69,7 @@ class InsuranceProductService
 
     public function importFromCsv($file)
     {
-        //ファイルの読み込み
+        //ファイルの読み込み(1000文字)
         $sample = file_get_contents($file->getRealPath(), false, null, 0, 1000);
 
         //区切り文字の判定
@@ -90,9 +91,17 @@ class InsuranceProductService
 
         // 1行目をヘッダーに設定
         $csv->setHeaderOffset(0);
-
         // ヘッダーをトリムして再設定
         $headers = array_map('trim', $csv->getHeader());
+
+        //ヘッダーの定義
+        $requiredHeaders = ['name', 'description', 'type', 'approval_status'];
+        $invalidHeaders = array_diff($requiredHeaders, $headers);
+
+        //不正なヘッダーがある場合はエラーで処理中断
+        if (!empty($invalidHeaders)) {
+            throw new Exception('CSVヘッダーが不正です: ' . implode(',', $invalidHeaders));
+        }
 
         // Statement を使ってレコード取得
         $stmt = (new Statement());
@@ -110,8 +119,8 @@ class InsuranceProductService
                 try {
                     $name = trim($row['name'] ?? '');
                     $description = trim($row['description'] ?? '');
-                    $typeValue = trim($row['type'] ?? '');
-                    $statusValue = trim($row['approval_status'] ?? '');
+                    $typeValue = strtolower(trim($row['type'] ?? ''));
+                    $statusValue = strtolower(trim($row['approval_status'] ?? ''));
 
                     $invalidColumns = [];
 

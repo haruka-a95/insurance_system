@@ -45,6 +45,7 @@ class InsurancePolicyService
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("顧客更新失敗" . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -58,6 +59,7 @@ class InsurancePolicyService
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("顧客削除失敗" . $e->getMessage());
+            throw $e;
         }
     }
 }
